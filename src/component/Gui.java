@@ -1,5 +1,6 @@
 package component;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -7,8 +8,18 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 import java.awt.BorderLayout;
+import java.awt.GridLayout;
+
+import component.button.*;
+import component.canvas.Canvas;
 
 public class Gui {
+    private static Canvas canvas;
+
+    public static Canvas getCanvas() {
+        return canvas;
+    }
+
 	private JMenuBar menuBar() {
 		JMenuBar menubar = new JMenuBar();
 		
@@ -28,9 +39,31 @@ public class Gui {
 
 	private JPanel toolsPanel() {
 		JPanel toolspanel = new JPanel();
-		
+		toolspanel.setLayout(new GridLayout(6, 1));
+        
+        JButton selectButton = new SelectButton();
+        JButton associatioButton = new AssociationButton();
+        JButton gereralizationButton = new GereralizationButton();
+        JButton compositionButton = new CompositionButton();
+        JButton classButton = new ClassButton();
+        JButton useCaseButton = new UseCaseButton();
+
+        toolspanel.add(selectButton);
+        toolspanel.add(associatioButton);
+        toolspanel.add(gereralizationButton);
+        toolspanel.add(compositionButton);
+        toolspanel.add(classButton);
+        toolspanel.add(useCaseButton);
+
 		return toolspanel;
 	}
+
+    private JPanel canvas() {
+        if(canvas == null){
+            canvas = new Canvas();
+        }
+        return canvas; 
+    }
 
 	private void drawUI() {
 		JFrame mainFrame = new JFrame();
@@ -39,8 +72,12 @@ public class Gui {
         mainFrame.setTitle("UML editior");
 
 		JMenuBar menuBar = menuBar();
+        JPanel toolsPanel = toolsPanel();
+        JPanel canvas = canvas();
 
         mainFrame.getContentPane().add(BorderLayout.NORTH, menuBar);
+        mainFrame.getContentPane().add(BorderLayout.WEST, toolsPanel);
+        mainFrame.getContentPane().add(BorderLayout.CENTER, canvas);
 
         mainFrame.setVisible(true);
 	}
