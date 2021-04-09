@@ -8,17 +8,44 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.GridLayout;
+import java.util.ArrayList;
+import java.util.List;
 
 import component.button.*;
 import component.canvas.Canvas;
+import component.canvas.CanvasBasicDrawTools;
 
 public class Gui {
-    private static Canvas canvas;
+    private Canvas canvas; 
+    private CanvasBasicDrawTools frontLayerDrawTools, baseLayerDrawTools;
+    public static List<UMLCanvasObject> canvasDrawObjectList = new ArrayList<>(); //worst
+    public static Gui gui; //worst
 
-    public static Canvas getCanvas() {
-        return canvas;
+    /*
+    public void addCanvasDrawObjectList(UMLCanvasObject canvasObject) {
+        canvasDrawObjectList.add(canvasObject);
+        updateCanvas();
     }
+    */
+
+    public UMLCanvasObject getClickObject(double x, double y) {
+        for (UMLCanvasObject umlCanvasObject : canvasDrawObjectList) {
+            if (umlCanvasObject.inside(x, y)){
+                return umlCanvasObject;
+            }
+        }
+        return null;
+    }
+
+    public void updateCanvas() {
+        for (UMLCanvasObject canvasObject : canvasDrawObjectList) {
+            System.out.println(canvasObject);
+            canvasObject.paint(this.baseLayerDrawTools);
+        }
+    }
+    
 
 	private JMenuBar menuBar() {
 		JMenuBar menubar = new JMenuBar();
@@ -41,12 +68,12 @@ public class Gui {
 		JPanel toolspanel = new JPanel();
 		toolspanel.setLayout(new GridLayout(6, 1));
         
-        JButton selectButton = new SelectButton();
-        JButton associatioButton = new AssociationButton();
-        JButton gereralizationButton = new GereralizationButton();
-        JButton compositionButton = new CompositionButton();
-        JButton classButton = new ClassButton();
-        JButton useCaseButton = new UseCaseButton();
+        JButton selectButton = new SelectButton(this.canvas, this.frontLayerDrawTools, this.baseLayerDrawTools);
+        JButton associatioButton = new AssociationButton(canvas, this.frontLayerDrawTools, this.baseLayerDrawTools);
+        JButton gereralizationButton = new GereralizationButton(canvas, this.frontLayerDrawTools, this.baseLayerDrawTools);
+        JButton compositionButton = new CompositionButton(canvas, this.frontLayerDrawTools, this.baseLayerDrawTools);
+        JButton classButton = new ClassButton(canvas, this.frontLayerDrawTools, this.baseLayerDrawTools);
+        JButton useCaseButton = new UseCaseButton(canvas, this.frontLayerDrawTools, this.baseLayerDrawTools);
 
         toolspanel.add(selectButton);
         toolspanel.add(associatioButton);
@@ -60,20 +87,23 @@ public class Gui {
 
     private JPanel canvas() {
         if(canvas == null){
-            canvas = new Canvas();
+            this.canvas = new Canvas();
+            this.frontLayerDrawTools = new CanvasBasicDrawTools(canvas);
+            this.baseLayerDrawTools = new CanvasBasicDrawTools(canvas);
         }
         return canvas; 
     }
 
 	private void drawUI() {
 		JFrame mainFrame = new JFrame();
-        mainFrame.setSize(1024, 768);
+        mainFrame.setSize(1024, 768); //set windows size
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setTitle("UML editior");
 
+        JPanel canvas = canvas(); //must be the first excute
+        canvas.setBackground(Color.GRAY);
 		JMenuBar menuBar = menuBar();
         JPanel toolsPanel = toolsPanel();
-        JPanel canvas = canvas();
 
         mainFrame.getContentPane().add(BorderLayout.NORTH, menuBar);
         mainFrame.getContentPane().add(BorderLayout.WEST, toolsPanel);
@@ -83,38 +113,8 @@ public class Gui {
 	}
 
 	public Gui() {
+        this.gui = this;
 		drawUI();
 	}
 
-	public static void main(String[] args){
-		/*JFrame demo = new JFrame();
-        demo.setSize(1024, 768);
-        demo.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        demo.setTitle("UML editior");
-		
-        JCheckBox checkbox = new JCheckBox("JCheckBox");
-        JRadioButton radiobutton = new JRadioButton("JRadiobutton");
-        JButton button = new JButton("JButton");
-        JLabel label = new JLabel("JLabel");
-        JTextArea textarea = new JTextArea("JTextArea");
-         
-        demo.getContentPane().add(BorderLayout.EAST, checkbox);
-        demo.getContentPane().add(BorderLayout.WEST, radiobutton);
-        demo.getContentPane().add(BorderLayout.SOUTH, button);
-        demo.getContentPane().add(BorderLayout.NORTH , label);
-        demo.getContentPane().add(BorderLayout.CENTER, textarea);
-
-        JPanel toolsPanel = new JPanel();
-        JMenuBar menuBar = new JMenuBar();
-        JButton button = new JButton("JButton");
-        toolsPanel.add(button);
-
-		Gui gui = new Gui();
-
-		JMenuBar menuBar = gui.menuBar();
-
-        demo.getContentPane().add(BorderLayout.NORTH, menuBar);
-        
-        demo.setVisible(true);*/
-	}
 }
