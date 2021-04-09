@@ -1,10 +1,12 @@
 package component.button;
 
+import component.canvas.Canvas;
+import component.canvas.CanvasBasicDrawTools;
 import component.mode.*;
 
 public class SelectButton extends BasicButton {
-    public SelectButton() {
-        super("select");
-        this.mode = new SelectMode();
+    public SelectButton(Canvas canvas, CanvasBasicDrawTools frontLayerBasicDrawTools, CanvasBasicDrawTools baseLayeDrawTools) {
+        super("select", canvas);
+        this.mode = new SelectMode(canvas, frontLayerBasicDrawTools, baseLayeDrawTools);
     }
 }
